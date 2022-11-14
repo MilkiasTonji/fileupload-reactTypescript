@@ -1,67 +1,84 @@
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 import React from 'react'
 
-const FileList = () => {
+interface DataType {
+    key: React.Key,
+    fileName: string,
+    fileSize: string,
+    uploadedDate: any
+}
+
+const FileList: React.FC = () => {
 
     const [pageSize, setPageSize] = React.useState(5)
     const [page, setPage] = React.useState(1)
+    const today: any = new Date().toDateString()
 
-    const dataSource = [
+    const data: DataType[] = [
         {
             key: '1',
-            name: 'Mike',
-            age: 32,
-            address: '10 Downing Street',
+            fileName: 'Mike',
+            fileSize: "10",
+            uploadedDate: today,
         },
         {
             key: '2',
-            name: 'John',
-            age: 42,
-            address: '10 Downing Street',
+            fileName: 'John',
+            fileSize: "42",
+            uploadedDate: today,
         },
         {
-            key: '1',
-            name: 'Mike',
-            age: 32,
-            address: '10 Downing Street',
+            key: '3',
+            fileName: 'Mike',
+            fileSize: "32",
+            uploadedDate: today,
         },
         {
-            key: '2',
-            name: 'John',
-            age: 42,
-            address: '10 Downing Street',
-        },
-        {
-            key: '1',
-            name: 'Mike',
-            age: 32,
-            address: '10 Downing Street',
-        },
-        {
-            key: '2',
-            name: 'John',
-            age: 42,
-            address: '10 Downing Street',
+            key: '4',
+            fileName: 'John',
+            fileSize: "42",
+            uploadedDate: today,
         },
     ]
 
-    const [total, setTotal] = React.useState(dataSource.length)
+    const [total, setTotal] = React.useState(data.length)
 
-    const columns = [
+    const columns: ColumnsType<DataType> = [
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'fileName',
+            dataIndex: 'fileName',
+            key: 'fileName',
         },
         {
-            title: 'Age',
-            dataIndex: 'age',
-            key: 'age',
+            title: 'fileSize',
+            dataIndex: 'fileSize',
+            key: 'fileSize',
+            render: (_, record) => (
+                <div>
+                    {record.fileSize}MB
+                </div>
+            )
         },
         {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
+            title: 'uploadedDate',
+            dataIndex: 'uploadedDate',
+            key: 'uploadedDate',
+            render: (_, record) => (
+                <div>
+                    <p>{record.uploadedDate}</p>
+                </div>
+            )
+        },
+        {
+            title: 'Action',
+            dataIndex: 'id',
+            render: (_, record) => (
+                <div className='flex items-center justify-center gap-3'>
+                    <Button>Edit</Button>
+                    <Button danger>Delete</Button>
+                </div>
+            )
         },
     ]
 
@@ -69,7 +86,7 @@ const FileList = () => {
     return (
         <div>
             <Table
-                dataSource={dataSource}
+                dataSource={data}
                 columns={columns}
                 // pagination={{
                 //     pageSize: pageSize,
