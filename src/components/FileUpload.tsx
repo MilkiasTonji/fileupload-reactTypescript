@@ -1,12 +1,19 @@
-import { Button } from "antd";
-import React, { useState } from "react";
+import { Button, message } from "antd";
+import React, { useState, useEffect } from "react";
+import { uploadFile } from "../services";
 import CustomModal from "./CustomModal";
 import FileList from "./FileList";
 
 const FileUpload: React.FC = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [file, setFile] = useState(null)
+  const [file, setFile] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [fileChanged, setFileChanged] = useState(false);
+
+  useEffect(() => {
+    console.log('it re-renders')
+  }, [fileChanged]);
 
   const showModal = () => {
     setVisible(true);
@@ -14,13 +21,26 @@ const FileUpload: React.FC = () => {
 
   const handleOk = () => {
     // use formdata to send file
-    const formdata = new FormData()
-    console.log("file: ", file)
     setConfirmLoading(true);
-    setTimeout(() => {
-      setVisible(false);
-      setConfirmLoading(false);
-    }, 2000);
+    uploadFile(file)
+      .then((resp) => {
+        const { success, file } = resp;
+        setConfirmLoading(false);
+        if (success && Object.keys(file).length > 0) {
+          const { fileName, id } = file;
+          if (fileName && id) {
+            setFileChanged(true);
+            message.success("File Uploaded successfully!");
+            setVisible(false);
+          }
+        }
+      })
+      .catch((err) => {
+        setConfirmLoading(false);
+        setVisible(false);
+        setErrorMessage(err);
+        setFileChanged(false);
+      });
   };
 
   const handleCancel = () => {
@@ -35,7 +55,8 @@ const FileUpload: React.FC = () => {
           confirmLoading={confirmLoading}
           handleOk={handleOk}
           handleCancel={handleCancel}
-          setFile = {setFile}
+          setFile={setFile}
+          errorMessage={errorMessage}
         />
       )}
       <div className="w-1/2 h-full bg-white flex-col shadow-md rounded-md p-3">
@@ -46,7 +67,10 @@ const FileUpload: React.FC = () => {
           </Button>
         </div>
         <div className="p-3 mt-5">
-          <FileList />
+          <FileList 
+           fileChanged = {fileChanged}
+           setFileChanged={setFileChanged}
+          />
         </div>
       </div>
     </div>

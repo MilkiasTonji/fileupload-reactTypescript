@@ -1,5 +1,5 @@
-import { Button, Modal } from "antd";
-import React, { useState } from "react";
+import { Modal } from "antd";
+import React, {  } from "react";
 
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
@@ -11,6 +11,7 @@ interface AppProps {
   handleOk: any;
   handleCancel: any;
   setFile: any;
+  errorMessage: string,
 }
 
 const CustomModal: React.FC<AppProps> = ({
@@ -19,6 +20,7 @@ const CustomModal: React.FC<AppProps> = ({
   handleOk,
   handleCancel,
   setFile,
+  errorMessage
 }: AppProps) => {
   const { Dragger } = Upload;
 
@@ -37,7 +39,7 @@ const CustomModal: React.FC<AppProps> = ({
       return false;
     },
     onChange(info) {
-      const { name, size } = info.file;
+      // const { name, size } = info.file;
       setFile(info.file);
       console.log("name: size", info.file);
     },
@@ -54,8 +56,17 @@ const CustomModal: React.FC<AppProps> = ({
       onOk={handleOk}
       confirmLoading={confirmLoading}
       onCancel={handleCancel}
+      okText="Upload"
+      okButtonProps={{
+        style: { background: "#1890ff", borderColor: "#1890ff" }
+      }}
     >
       <div className="flex items-center justify-center p-3">
+        {
+          errorMessage && 
+          <div className="p-2 m-2 text-red-400">{errorMessage}</div>  
+        }
+
         <Dragger {...props}>
           <p className="ant-upload-drag-icon">
             <InboxOutlined />
